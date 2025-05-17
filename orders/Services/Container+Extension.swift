@@ -8,6 +8,14 @@
 import FactoryKit
 
 extension Container {
+    var ordersCoordinator: Factory<OrdersCoordinator> {
+        Factory(self) { OrdersCoordinator() }
+    }
+    
+    var customersCoordinator: Factory<CustomersCoordinator> {
+        Factory(self) { CustomersCoordinator() }
+    }
+    
     var repository: Factory<RepositoryProtocol> {
         Factory(self) { Repository() }
     }
@@ -17,6 +25,6 @@ extension Container {
     }
     
     var manager: Factory<Manager> {
-        self { Manager(apiService: self.apiService(), repository: self.repository()) }
+        self { Manager() }
     }
 }

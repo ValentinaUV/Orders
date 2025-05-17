@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import FactoryKit
 
 @main
 struct ordersApp: App {
+    @State var tabSelection: TabsEnum = .orders
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(tabSelection: $tabSelection)
+                .environmentObject(Container.shared.ordersCoordinator())
+                .environmentObject(Container.shared.customersCoordinator())
         }
     }
 }

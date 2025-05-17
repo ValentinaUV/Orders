@@ -5,31 +5,55 @@
 //  Created by Valentina Ungurean on 16.05.2025.
 //
 
+import Foundation
 import FactoryKit
+import RealmSwift
 
 class Manager {
     
-    let apiService: ApiServiceProtocol
-    let repository: RepositoryProtocol
+    @Injected(\.apiService) private var apiService: ApiServiceProtocol
+    @Injected(\.repository) private var repository: RepositoryProtocol
     
-    init(apiService: ApiServiceProtocol, repository: RepositoryProtocol) {
-        self.apiService = apiService
-        self.repository = repository
+    func getOrders(completion: @escaping ([Order]) -> Void) {
+        let orders = repository.getAllOrders()
+        if orders.isEmpty {
+            fetchAndSaveCustomers()
+            fetchAndSaveOrders {
+                let updatedOrders = self.repository.getAllOrders()
+                completion(updatedOrders)
+            }
+        }
+        completion(orders)
     }
     
-    func fetchAndSaveOrders() {
+    func getOrder(id: Int) -> Order? {
+        print("Getting order with ID \(id) from Realm via Manager...")
+        return repository.getOrder(id: id)
+    }
+    
+    func getCustomers() -> [Customer] {
+        return repository.getAllCustomers()
+    }
+    
+    func getCustomer(id: Int) -> Customer? {
+        print("Getting customer with ID \(id) from Realm via Manager...")
+        return repository.getCustomer(id: id)
+    }
+    
+    private func fetchAndSaveOrders(closure: @escaping () -> Void) {
         apiService.fetchOrders { result in
             switch result {
             case .success(let orders):
                 print("Fetched orders successfully.")
                 self.repository.saveOrders(orders: orders)
+                closure()
             case .failure(let error):
                 print("Failed to fetch orders: \(error)")
             }
         }
     }
 
-    func fetchAndSaveCustomers() {
+    private func fetchAndSaveCustomers() {
         apiService.fetchCustomers { result in
             switch result {
             case .success(let customers):

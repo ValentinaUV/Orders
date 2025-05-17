@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7DD409182DD68D000041719C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7DD409172DD68D000041719C /* RealmSwift */; };
+		7DD4091B2DD68D410041719C /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7DD4091A2DD68D410041719C /* Alamofire */; };
+		7DD4092D2DD699F40041719C /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7DD4092C2DD699F40041719C /* FactoryKit */; };
+		7DD40BE02DD8F65B0041719C /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 7DD409172DD68D000041719C /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7DD408F12DD5F71E0041719C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -23,15 +30,42 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7DD40BE12DD8F65B0041719C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7DD40BE02DD8F65B0041719C /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		7DD408E32DD5F71C0041719C /* orders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = orders.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DD408F02DD5F71E0041719C /* ordersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ordersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DD408FA2DD5F71E0041719C /* ordersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ordersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7DD40BCB2DD89E820041719C /* Exceptions for "orders" folder in "orders" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7DD408E22DD5F71C0041719C /* orders */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7DD408E52DD5F71C0041719C /* orders */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7DD40BCB2DD89E820041719C /* Exceptions for "orders" folder in "orders" target */,
+			);
 			path = orders;
 			sourceTree = "<group>";
 		};
@@ -52,6 +86,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DD4092D2DD699F40041719C /* FactoryKit in Frameworks */,
+				7DD4091B2DD68D410041719C /* Alamofire in Frameworks */,
+				7DD409182DD68D000041719C /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +139,7 @@
 				7DD408DF2DD5F71C0041719C /* Sources */,
 				7DD408E02DD5F71C0041719C /* Frameworks */,
 				7DD408E12DD5F71C0041719C /* Resources */,
+				7DD40BE12DD8F65B0041719C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,6 +150,9 @@
 			);
 			name = orders;
 			packageProductDependencies = (
+				7DD409172DD68D000041719C /* RealmSwift */,
+				7DD4091A2DD68D410041719C /* Alamofire */,
+				7DD4092C2DD699F40041719C /* FactoryKit */,
 			);
 			productName = orders;
 			productReference = 7DD408E32DD5F71C0041719C /* orders.app */;
@@ -195,6 +236,11 @@
 			);
 			mainGroup = 7DD408DA2DD5F71C0041719C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7DD409162DD68D000041719C /* XCRemoteSwiftPackageReference "realm-swift" */,
+				7DD409192DD68D410041719C /* XCRemoteSwiftPackageReference "Alamofire" */,
+				7DD4092B2DD699F40041719C /* XCRemoteSwiftPackageReference "Factory" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7DD408E42DD5F71C0041719C /* Products */;
 			projectDirPath = "";
@@ -400,11 +446,14 @@
 				DEVELOPMENT_TEAM = Z4ZKMU9A7M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = orders/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,11 +477,14 @@
 				DEVELOPMENT_TEAM = Z4ZKMU9A7M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = orders/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,6 +610,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7DD409162DD68D000041719C /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		7DD409192DD68D410041719C /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		7DD4092B2DD699F40041719C /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7DD409172DD68D000041719C /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DD409162DD68D000041719C /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		7DD4091A2DD68D410041719C /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DD409192DD68D410041719C /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		7DD4092C2DD699F40041719C /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DD4092B2DD699F40041719C /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7DD408DB2DD5F71C0041719C /* Project object */;
 }
