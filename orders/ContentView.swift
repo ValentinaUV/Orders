@@ -26,14 +26,8 @@ struct ContentView: View {
                 OrdersView()
             }
             .tabItem {
-                if tabSelection == .orders {
-                    Text("Orders")
-                        .textCase(.uppercase)
-                        .font(.title)
-                } else {
-                    Text("Orders")
-                        .font(.title)
-                }
+                Label("Orders", systemImage: "list.number")
+                    .textCase(tabSelection == .orders ? .uppercase : .none)
             }
             .tag(TabsEnum.orders)
             
@@ -41,20 +35,11 @@ struct ContentView: View {
                 CustomersView()
             }
             .tabItem {
-                if tabSelection == .customers {
-                    Text("Customers")
-                        .textCase(.uppercase)
-                        .font(.title)
-                } else {
-                    Text("Customers")
-                        .font(.title)
-                }
+                Label("Customers", systemImage: "person.fill")
+                    .textCase(tabSelection == .customers ? .uppercase : .none)
             }
             .tag(TabsEnum.customers)
         }
     }
 }
 
-//#Preview {
-//    ContentView()
-//}

@@ -91,4 +91,3 @@ struct CustomerCardView: View {
         .contentShape(Rectangle())
     }
 }
-
