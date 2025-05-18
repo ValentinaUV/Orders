@@ -88,6 +88,7 @@ class Manager {
                 print("Simulated update for order \(order.id) status to '\(newStatus)' succeeded.")
 
                 self.repository.updateOrderStatus(orderId: order.id, to: newStatus)
+                
         
             case .failure(let error):
                 print("Simulated update for order \(order.id) failed: \(error)")

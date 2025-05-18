@@ -68,16 +68,15 @@ struct OrderStatusDropdown: View {
     @State var selectedStatus: OrderStatus
 
     var body: some View {
-        if let order = viewModel.order {
-            Picker("Status", selection: $selectedStatus) {
-                ForEach(OrderStatus.allCases, id: \.self) { status in
-                    Text(status.rawValue.capitalized).tag(status)
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: selectedStatus) { newStatus in
-                viewModel.updateOrderStatus(to: newStatus)
+        Picker("Status", selection: $selectedStatus) {
+            ForEach(OrderStatus.allCases, id: \.self) { status in
+                Text(status.rawValue.capitalized).tag(status)
             }
         }
+        .pickerStyle(.menu)
+        .onChange(of: selectedStatus) { newStatus in
+            viewModel.updateOrderStatus(to: newStatus)
+        }
+        .padding(.trailing, -10)
     }
 }

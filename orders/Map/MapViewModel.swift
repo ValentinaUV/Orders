@@ -17,8 +17,10 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var userLocation: CLLocation?
     @Published var annotations: [CustomAnnotation] = []
     @Published var isRoutingInProgress = false
-    @Published var isRoutingDone = false
+    @Published var isRoutingDone = true
     @Published var route: MKRoute?
+    @Published var routeDistance: CLLocationDistance?
+    @Published var showDistanceModal = false
     
     private let locationManager = CLLocationManager()
     
@@ -52,11 +54,11 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             
             region = MKCoordinateRegion(
                 center: location.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
             )
             
             updateCurrentLocationAnnotation(location: location)
-//            locationManager.stopUpdatingLocation()
+            locationManager.stopUpdatingLocation()
         }
     }
     
@@ -85,26 +87,24 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
-    func getDirections(destination: CLLocationCoordinate2D) {
+    func getDirections(destination: CustomAnnotation) {
         guard let userLocation = userLocation else {
             checkLocationAuthorization()
             return
         }
         
-        if isRoutingInProgress || isRoutingDone {
+        if isRoutingInProgress || !isRoutingDone {
             return
         }
         isRoutingInProgress = true
         
-        let destinationAnnotation = CustomAnnotation(
-            coordinate: destination,
-            title: "Destination",
-            isDestination: true
-        )
+        annotations.removeAll { $0.isDestination }
+        var destinationAnnotation = destination
+        destinationAnnotation.isDestination = true
         annotations.append(destinationAnnotation)
         
         let sourcePlacemark = MKPlacemark(coordinate: userLocation.coordinate)
-        let destinationPlacemark = MKPlacemark(coordinate: destination)
+        let destinationPlacemark = MKPlacemark(coordinate: destination.coordinate)
         
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: sourcePlacemark)
@@ -124,30 +124,14 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             
             if let route = response?.routes.first {
                 self.route = route
+                self.routeDistance = route.distance
                 self.createRegionForRoute(route: route)
                 self.isRoutingDone = true
+                self.showDistanceModal = true
             }
         }
     }
-    
-    // Method to update destination
-//    func updateDestination(_ newDestination: CLLocationCoordinate2D) {
-//        self.destination = newDestination
-//
-//        // Update destination annotation
-//        var updatedAnnotations = annotations.filter { !$0.isDestination }
-//        let destinationAnnotation = CustomAnnotation(
-//            coordinate: destination,
-//            title: "Destination",
-//            isDestination: true
-//        )
-//        updatedAnnotations.append(destinationAnnotation)
-//        self.annotations = updatedAnnotations
-//
-//        // Clear existing route
-//        self.route = nil
-//    }
-//
+
     private func createRegionForRoute(route: MKRoute) {
         let rect = route.polyline.boundingMapRect
         
@@ -165,11 +149,19 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 }
  
-struct CustomAnnotation: Identifiable {
+struct CustomAnnotation: Identifiable, Equatable {
     let id = UUID()
     let coordinate: CLLocationCoordinate2D
     let title: String
-    let isDestination: Bool
+    var isDestination: Bool
+    
+    static func == (lhs: CustomAnnotation, rhs: CustomAnnotation) -> Bool {
+        return lhs.id == rhs.id &&
+        lhs.coordinate.latitude == rhs.coordinate.latitude &&
+        lhs.coordinate.longitude == rhs.coordinate.longitude &&
+        lhs.title == rhs.title &&
+        lhs.isDestination == rhs.isDestination
+    }
 }
  
 extension MKCoordinateRegion {

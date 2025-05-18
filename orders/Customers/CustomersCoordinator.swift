@@ -11,6 +11,7 @@ import MapKit
 enum CustomersViews: Hashable, Equatable {
     case customers
     case customerMapView(customer: Customer)
+    case allCustomersMapView(customers: [Customer])
 }
 
 class CustomersCoordinator: ObservableObject{
@@ -33,6 +34,10 @@ class CustomersCoordinator: ObservableObject{
     func goToCustomerMapView(customer: Customer) {
         path.append(CustomersViews.customerMapView(customer: customer))
     }
+    
+    func goToAllCustomersMapView(customers: [Customer]) {
+        path.append(CustomersViews.allCustomersMapView(customers: customers))
+    }
 }
 
 enum CustomersViewFactory {
@@ -44,12 +49,31 @@ enum CustomersViewFactory {
             CustomersView()
         case let .customerMapView(customer):
             if let lat = customer.latitude, let long = customer.longitude {
-                let location = Location(name: customer.name,
-                                        coordinate: CLLocationCoordinate2D(
-                                            latitude: lat,
-                                            longitude: long))
+                let location = CustomAnnotation(
+                    coordinate: CLLocationCoordinate2D(
+                        latitude: lat,
+                        longitude: long
+                    ),
+                    title: customer.name,
+                    isDestination: true
+                )
                 MapView(annotations: [location], selectedMarker: location)
             }
+        case let .allCustomersMapView(customers):
+            let annotations: [CustomAnnotation] = customers.compactMap { customer in
+                if let lat = customer.latitude, let long = customer.longitude {
+                    return CustomAnnotation(
+                        coordinate: CLLocationCoordinate2D(
+                            latitude: lat,
+                            longitude: long
+                        ),
+                        title: customer.name,
+                        isDestination: false
+                    )
+                }
+                return nil
+            }
+            MapView(annotations: annotations, selectedMarker: nil)
         }
     }
 }

@@ -28,11 +28,21 @@ struct CustomersView: View {
 }
 
 struct CustomersList: View {
+    @EnvironmentObject var customersCoordinator: CustomersCoordinator
     @ObservedObject var viewModel: CustomersViewModel
     
     var body: some View {
         ScrollView {
             VStack {
+                HStack{
+                    Spacer()
+                    Button(action: {
+                        customersCoordinator.goToAllCustomersMapView(customers: viewModel.customers)
+                    }, label: {
+                        Label("Show ALL on Map", systemImage: "mappin.and.ellipse")
+                    }
+                    )
+                }
                 ForEach($viewModel.customers, id: \.id) { $customer in
                     CustomerCardView(customer: customer)
                 }

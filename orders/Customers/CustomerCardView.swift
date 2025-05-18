@@ -36,26 +36,21 @@ struct CustomerCardView: View {
                     }
                     
                     HStack {
-                        Spacer()
                         Button(action: {
                             customersCoordinator.goToCustomerMapView(customer: customer)
                         }, label: {
-                            Text("Show on map")
-                        }
-                        )
-                    }
-                    
-                    HStack {
+                            Label("Show on map", systemImage: "mappin.and.ellipse")
+                        })
+                               
+                        Spacer()
+                               
                         if viewModel.orders.isEmpty {
-                            Spacer()
                             Button(action: {
                                 viewModel.getOrders(for: customer)
                             }, label: {
                                 Text("Show Orders")
                             })
                         } else {
-                            Text("Orders:")
-                            Spacer()
                             VStack {
                                 ForEach(viewModel.orders, id: \.id) { order in
                                     Button(action: {
@@ -63,7 +58,7 @@ struct CustomerCardView: View {
                                             UIApplication.shared.open(url)
                                         }
                                     }, label: {
-                                        Text("order nr: \(order.id)")
+                                        Text("Order #\(order.id)")
                                     })
                                 }
                             }
