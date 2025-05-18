@@ -9,22 +9,26 @@ import FactoryKit
 
 extension Container {
     var ordersCoordinator: Factory<OrdersCoordinator> {
-        Factory(self) { OrdersCoordinator() }
+        self { OrdersCoordinator() }
     }
     
     var customersCoordinator: Factory<CustomersCoordinator> {
-        Factory(self) { CustomersCoordinator() }
+        self { CustomersCoordinator() }
     }
     
     var repository: Factory<RepositoryProtocol> {
-        Factory(self) { Repository() }
+        self { Repository() }
     }
     
     var apiService: Factory<ApiServiceProtocol> {
-        Factory(self) { RestService() }
+        self { RestService() }
     }
     
     var manager: Factory<Manager> {
         self { Manager() }
+    }
+    
+    var notificationManager: Factory<NotificationManager> {
+        self { NotificationManager.shared }
     }
 }

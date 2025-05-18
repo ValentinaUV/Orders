@@ -13,6 +13,7 @@ class Manager {
     
     @Injected(\.apiService) private var apiService: ApiServiceProtocol
     @Injected(\.repository) private var repository: RepositoryProtocol
+    @Injected(\.notificationManager) private var notificationManager: NotificationManager
     
     func getOrders(completion: @escaping ([Order]) -> Void) {
         let orders = repository.getAllOrders()
@@ -88,7 +89,7 @@ class Manager {
                 print("Simulated update for order \(order.id) status to '\(newStatus)' succeeded.")
 
                 self.repository.updateOrderStatus(orderId: order.id, to: newStatus)
-                
+                self.notificationManager.scheduleOrderStatusChangeNotification(orderId: order.id, newStatus: newStatus)
         
             case .failure(let error):
                 print("Simulated update for order \(order.id) failed: \(error)")
