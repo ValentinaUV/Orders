@@ -23,6 +23,8 @@ class CustomerObject: Object {
     @Persisted var name: String
     @Persisted var latitude: Double = 0.0
     @Persisted var longitude: Double = 0.0
+    
+    @Persisted var orders: LinkingObjects<OrderObject> = LinkingObjects(fromType: OrderObject.self, property: "customer")
 }
 
 protocol RepositoryProtocol {
@@ -33,6 +35,7 @@ protocol RepositoryProtocol {
     func getOrder(id: Int) -> Order?
     func getAllCustomers() -> [Customer]
     func getCustomer(id: Int) -> Customer?
+    func getOrdersForCustomer(customerId: Int) -> [Order]
 }
 
 class Repository: RepositoryProtocol {
@@ -107,9 +110,7 @@ class Repository: RepositoryProtocol {
             let realm = try Realm()
             let orderObjects = realm.objects(OrderObject.self)
 
-            let orders = orderObjects.map { orderObject in
-                self.convertToOrder(orderObject: orderObject)
-            }
+            let orders = orderObjects.map(self.convertToOrder)
             return Array(orders)
         } catch {
             print("Error fetching all orders from Realm: \(error)")
@@ -156,9 +157,7 @@ class Repository: RepositoryProtocol {
             let realm = try Realm()
             let customerObjects = realm.objects(CustomerObject.self)
 
-            let customers = customerObjects.map { customerObject in
-                self.convertToCustomer(customerObject: customerObject)
-            }
+            let customers = customerObjects.map(self.convertToCustomer)
             return Array(customers)
         } catch {
             print("Error fetching all customers from Realm: \(error)")
@@ -186,6 +185,21 @@ class Repository: RepositoryProtocol {
         } catch {
             print("Error fetching customer with ID \(id) from Realm: \(error)")
             return nil
+        }
+    }
+    
+    func getOrdersForCustomer(customerId: Int) -> [Order] {
+        do {
+            let realm = try Realm()
+
+            let orderObjects = realm.object(ofType: CustomerObject.self, forPrimaryKey: customerId)?.orders ?? LinkingObjects<OrderObject>(fromType: OrderObject.self, property: "customer")
+
+            let orders = orderObjects.map(self.convertToOrder)
+            print("Fetched \(orders.count) orders for customer ID \(customerId).")
+            return Array(orders)
+        } catch {
+            print("Error fetching orders for customer ID \(customerId) from Realm: \(error)")
+            return []
         }
     }
 }

@@ -15,7 +15,7 @@ protocol ApiServiceProtocol {
 }
 
 class RestService: ApiServiceProtocol {
-    private let baseURL = "http://demo9550388.mockable.io"
+    private let baseURL = AppConfig.apiURL
 
     func fetchOrders(completion: @escaping (Result<[Order], Error>) -> Void) {
         let urlString = "\(baseURL)/orders"

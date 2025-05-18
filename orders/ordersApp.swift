@@ -11,12 +11,42 @@ import FactoryKit
 @main
 struct ordersApp: App {
     @State var tabSelection: TabsEnum = .orders
+    @ObservedObject var ordersCoordinator = Container.shared.ordersCoordinator()
+    @ObservedObject var customersCoordinator = Container.shared.customersCoordinator()
     
     var body: some Scene {
         WindowGroup {
             ContentView(tabSelection: $tabSelection)
-                .environmentObject(Container.shared.ordersCoordinator())
-                .environmentObject(Container.shared.customersCoordinator())
+                .environmentObject(ordersCoordinator)
+                .environmentObject(customersCoordinator)
+                .onOpenURL { incomingURL in
+                    print("App was opened via URL: \(incomingURL)")
+                    handleIncomingURL(incomingURL)
+                }
+        }
+    }
+    
+    private func handleIncomingURL(_ url: URL) {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            print("Invalid URL")
+            return
+        }
+        
+        if url.scheme == AppConfig.deepLinkScheme {
+            handleDeeplinks(components)
+            return
+        }
+    }
+    
+    private func handleDeeplinks(_ components: URLComponents) {
+        if let action = components.host {
+            if action == "orders", let orderId = components.queryItems?.first(where: { $0.name == "id" })?.value, let intId = Int(orderId) {
+                tabSelection = .orders
+                ordersCoordinator.goToOrderView(id: intId)
+                return
+            }
+            
+            print("Unknown URL, we can't handle this one!")
         }
     }
 }

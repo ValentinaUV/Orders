@@ -17,11 +17,20 @@ class Manager {
     func getOrders(completion: @escaping ([Order]) -> Void) {
         let orders = repository.getAllOrders()
         if orders.isEmpty {
-            fetchAndSaveCustomers()
-            fetchAndSaveOrders {
-                let updatedOrders = self.repository.getAllOrders()
-                completion(updatedOrders)
+            fetchAndSaveCustomers { success in
+                if success {
+                    print("Customers saved successfully. Proceeding to fetch orders.")
+                    self.fetchAndSaveOrders {
+                        print("Orders saved successfully. Fetching updated orders from repository.")
+                        let updatedOrders = self.repository.getAllOrders()
+                        completion(updatedOrders)
+                    }
+                } else {
+                    print("Failed to fetch or save customers.")
+                    completion([])
+                }
             }
+            
         }
         completion(orders)
     }
@@ -40,27 +49,34 @@ class Manager {
         return repository.getCustomer(id: id)
     }
     
-    private func fetchAndSaveOrders(closure: @escaping () -> Void) {
+    func getOrders(for customer: Customer) -> [Order] {
+        print("Getting orders for customer ID \(customer.id) from Realm via Manager...")
+        return repository.getOrdersForCustomer(customerId: customer.id)
+    }
+    
+    private func fetchAndSaveOrders(completion: @escaping () -> Void) {
         apiService.fetchOrders { result in
             switch result {
             case .success(let orders):
                 print("Fetched orders successfully.")
                 self.repository.saveOrders(orders: orders)
-                closure()
+                completion()
             case .failure(let error):
                 print("Failed to fetch orders: \(error)")
             }
         }
     }
 
-    private func fetchAndSaveCustomers() {
+    private func fetchAndSaveCustomers(completion: @escaping (Bool) -> Void) {
         apiService.fetchCustomers { result in
             switch result {
             case .success(let customers):
                 print("Fetched customers successfully.")
                 self.repository.saveCustomers(customers: customers)
+                completion(true)
             case .failure(let error):
                 print("Failed to fetch customers: \(error)")
+                completion(false)
             }
         }
     }
