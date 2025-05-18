@@ -46,16 +46,21 @@ class RestService: ApiServiceProtocol {
     func updateOrderStatus(orderId: Int, newStatus: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let urlString = "\(baseURL)/orders/\(orderId)"
         let parameters: [String: Any] = ["status": newStatus]
+        let headers: HTTPHeaders = [
+            "content-type": "application/json"
+        ]
 
-        AF.request(urlString, method: .put, parameters: parameters, encoding: JSONEncoding.default)
-            .response { response in
-                switch response.result {
-                case .success:
-                    print("Simulated update response received. Status code: \(response.response?.statusCode ?? -1)")
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+        AF.request(urlString, method: .put, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        .validate()
+        .response { response in
+            switch response.result {
+            case .success:
+                print("Simulated update response received. Status code: \(response.response?.statusCode)")
+                completion(.success(()))
+            case .failure(let error):
+                print("Failed to update order status: \(error)")
+                completion(.failure(error))
             }
+        }
     }
 }

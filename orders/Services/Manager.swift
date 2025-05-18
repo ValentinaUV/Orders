@@ -81,8 +81,8 @@ class Manager {
         }
     }
     
-    func updateOrderStatus(_ order: Order, to newStatus: String) {
-        apiService.updateOrderStatus(orderId: order.id, newStatus: newStatus) { result in
+    func updateOrderStatus(_ order: Order, to newStatus: OrderStatus) {
+        apiService.updateOrderStatus(orderId: order.id, newStatus: newStatus.rawValue) { result in
             switch result {
             case .success:
                 print("Simulated update for order \(order.id) status to '\(newStatus)' succeeded.")

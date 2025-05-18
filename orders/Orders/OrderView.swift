@@ -42,7 +42,7 @@ struct OrderView: View {
                     HStack(spacing: 10) {
                         Text("Status:")
                         Spacer()
-                        Text(order.status)
+                        OrderStatusDropdown(viewModel: viewModel, order: order, selectedStatus: order.status)
                     }
                     
                     HStack(spacing: 10) {
@@ -57,6 +57,27 @@ struct OrderView: View {
         .padding(.horizontal, 20)
         .onAppear {
             viewModel.getOrder(id: id)
+        }
+    }
+}
+
+struct OrderStatusDropdown: View {
+    @ObservedObject var viewModel: OrderViewModel
+    
+    @State var order: Order
+    @State var selectedStatus: OrderStatus
+
+    var body: some View {
+        if let order = viewModel.order {
+            Picker("Status", selection: $selectedStatus) {
+                ForEach(OrderStatus.allCases, id: \.self) { status in
+                    Text(status.rawValue.capitalized).tag(status)
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: selectedStatus) { newStatus in
+                viewModel.updateOrderStatus(to: newStatus)
+            }
         }
     }
 }

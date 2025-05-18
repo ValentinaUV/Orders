@@ -16,4 +16,10 @@ class OrderViewModel: ObservableObject {
     func getOrder(id: Int) {
         order = manager.getOrder(id: id)
     }
+    
+    func updateOrderStatus(to status: OrderStatus) {
+        if let order {
+            manager.updateOrderStatus(order, to: status)
+        }
+    }
 }

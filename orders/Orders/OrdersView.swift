@@ -77,7 +77,7 @@ struct OrderCardView: View {
                 HStack(spacing: 10) {
                     Text("Status:")
                     Spacer()
-                    Text(order.status)
+                    Text(order.status.rawValue.uppercased())
                 }
             }
             .padding(10)

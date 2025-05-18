@@ -30,7 +30,7 @@ class CustomerObject: Object {
 protocol RepositoryProtocol {
     func saveOrders(orders: [Order])
     func saveCustomers(customers: [Customer])
-    func updateOrderStatus(orderId: Int, to newStatus: String)
+    func updateOrderStatus(orderId: Int, to newStatus: OrderStatus)
     func getAllOrders() -> [Order]
     func getOrder(id: Int) -> Order?
     func getAllCustomers() -> [Customer]
@@ -51,7 +51,7 @@ class Repository: RepositoryProtocol {
                     orderObject.descriptionText = order.description ?? ""
                     orderObject.price = order.price
                     orderObject.imageUrl = order.image_url ?? ""
-                    orderObject.status = order.status
+                    orderObject.status = order.status.rawValue
 
                     if let customer = realm.object(ofType: CustomerObject.self, forPrimaryKey: order.customer_id) {
                         orderObject.customer = customer
@@ -91,12 +91,12 @@ class Repository: RepositoryProtocol {
         }
     }
     
-    func updateOrderStatus(orderId: Int, to newStatus: String) {
+    func updateOrderStatus(orderId: Int, to newStatus: OrderStatus) {
         do {
             let realm = try Realm()
             if let orderToUpdate = realm.object(ofType: OrderObject.self, forPrimaryKey: orderId) {
                 try realm.write {
-                    orderToUpdate.status = newStatus
+                    orderToUpdate.status = newStatus.rawValue
                     print("Manually updated order \(orderId) status to \(newStatus) in Realm after simulated API call.")
                 }
             }
@@ -133,7 +133,7 @@ class Repository: RepositoryProtocol {
             price: orderObject.price,
             customer_id: orderObject.customer_id,
             image_url: orderObject.imageUrl,
-            status: orderObject.status,
+            status: OrderStatus(rawValue: orderObject.status) ?? .new,
             customer: customer
         )
     }
