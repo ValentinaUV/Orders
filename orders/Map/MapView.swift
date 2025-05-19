@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import FactoryKit
 
 struct Location: Identifiable {
     let id = UUID()
@@ -15,12 +16,11 @@ struct Location: Identifiable {
 }
 
 struct MapView: View {
+    @Injected(\.manager) private var manager: AppManager
     @EnvironmentObject var customersCoordinator: CustomersCoordinator
-    
     @StateObject private var viewModel = MapViewModel()
     
     @State var annotations: [CustomAnnotation] = []
-
     @State var selectedMarker: CustomAnnotation?
     
     var body: some View {
@@ -107,7 +107,6 @@ struct MapView: View {
                     Spacer()
                 }
             }
-            
             .overlay(
                 Group {
                     if viewModel.isRoutingInProgress {
@@ -120,6 +119,11 @@ struct MapView: View {
             )
             .onAppear {
                 viewModel.checkLocationAuthorization()
+                var params = [String: Any]()
+                if let selectedMarker {
+                    params = ["selected_marker_title": selectedMarker.title]
+                }
+                manager.logEvent(screenName: "map_screen", screenClass: "MapView", params: params)
             }
             .onChange(of: viewModel.userLocation) { _ in
                 if let location = selectedMarker {

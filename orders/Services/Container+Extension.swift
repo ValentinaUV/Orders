@@ -24,8 +24,8 @@ extension Container {
         self { RestService() }
     }
     
-    var manager: Factory<Manager> {
-        self { Manager() }
+    var manager: Factory<AppManager> {
+        self { AppManager() }
     }
     
     var notificationManager: Factory<NotificationManager> {

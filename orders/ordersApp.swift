@@ -7,9 +7,23 @@
 
 import SwiftUI
 import FactoryKit
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    @Injected(\.notificationManager) private var notificationManager: NotificationManager
+    
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        notificationManager.requestAuthorization()
+        return true
+    }
+}
 
 @main
 struct ordersApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     @State var tabSelection: TabsEnum = .orders
     @ObservedObject var ordersCoordinator = Container.shared.ordersCoordinator()
     @ObservedObject var customersCoordinator = Container.shared.customersCoordinator()

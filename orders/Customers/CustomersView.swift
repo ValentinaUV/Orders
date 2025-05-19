@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import FactoryKit
 
 struct CustomersView: View {
+    @Injected(\.manager) private var manager: AppManager
     @StateObject var viewModel = CustomersViewModel()
     
     var body: some View {
@@ -20,6 +22,7 @@ struct CustomersView: View {
         }
         .onAppear {
             viewModel.getCustomers()
+            manager.logEvent(screenName: "customers_screen", screenClass: "CutomersView")
         }
         .toolbarRole(.editor)
         .navigationBarTitleDisplayMode(.inline)

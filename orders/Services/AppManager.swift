@@ -1,5 +1,5 @@
 //
-//  Manager.swift
+//  AppManager.swift
 //  orders
 //
 //  Created by Valentina Ungurean on 16.05.2025.
@@ -8,8 +8,9 @@
 import Foundation
 import FactoryKit
 import RealmSwift
+import FirebaseAnalytics
 
-class Manager {
+class AppManager {
     
     @Injected(\.apiService) private var apiService: ApiServiceProtocol
     @Injected(\.repository) private var repository: RepositoryProtocol
@@ -90,10 +91,24 @@ class Manager {
 
                 self.repository.updateOrderStatus(orderId: order.id, to: newStatus)
                 self.notificationManager.scheduleOrderStatusChangeNotification(orderId: order.id, newStatus: newStatus)
+                self.logEvent(screenName: "order_screen", screenClass: "OrderView", params: [
+                    "action": "status_update",
+                    "order_id": order.id,
+                    "new_status": newStatus.rawValue
+                ])
         
             case .failure(let error):
                 print("Simulated update for order \(order.id) failed: \(error)")
             }
         }
+    }
+    
+    func logEvent(screenName: String, screenClass: String, params: [String: Any] = [:]) {
+        var parameters = params
+        parameters[AnalyticsParameterScreenName] = screenName
+        parameters[AnalyticsParameterScreenClass] = screenClass
+        
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: parameters)
+        print("Logged screen view: \(screenName)")
     }
 }

@@ -15,7 +15,6 @@ class NotificationManager: NSObject {
     private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
-        requestAuthorization()
     }
 
     func requestAuthorization() {

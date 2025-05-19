@@ -11,7 +11,7 @@ import FactoryKit
 class OrderViewModel: ObservableObject {
     @Published var order: Order?
     
-    @Injected(\.manager) private var manager: Manager
+    @Injected(\.manager) private var manager: AppManager
     
     func getOrder(id: Int) {
         order = manager.getOrder(id: id)

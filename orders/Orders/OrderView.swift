@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import FactoryKit
 
 struct OrderView: View {
+    @Injected(\.manager) private var manager: AppManager
+    
     let id: Int
     @StateObject var viewModel = OrderViewModel()
     let currency = "Lei"
@@ -57,6 +60,7 @@ struct OrderView: View {
         .padding(.horizontal, 20)
         .onAppear {
             viewModel.getOrder(id: id)
+            manager.logEvent(screenName: "order_screen", screenClass: "OrderView", params: ["order_id": id])
         }
     }
 }

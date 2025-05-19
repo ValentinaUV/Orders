@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import FactoryKit
 
 struct OrdersView: View {
     @StateObject var viewModel = OrdersViewModel()
+    @Injected(\.manager) private var manager: AppManager
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -17,6 +19,7 @@ struct OrdersView: View {
         }
         .onAppear {
             viewModel.getOrders()
+            manager.logEvent(screenName: "orders_screen", screenClass: "OrdersView")
         }
         .toolbarRole(.editor)
         .navigationBarTitleDisplayMode(.inline)
@@ -80,8 +83,11 @@ struct OrderCardView: View {
                     Text(order.status.rawValue.uppercased())
                 }
             }
-            .padding(10)
+            
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.blue)
         }
+        .padding(10)
         .background {
             RoundedRectangle(cornerRadius: 5)
                 .fill(.gray20)

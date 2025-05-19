@@ -9,7 +9,7 @@ import SwiftUI
 import FactoryKit
 
 class OrdersViewModel: ObservableObject {
-    @Injected(\.manager) private var manager: Manager
+    @Injected(\.manager) private var manager: AppManager
     @Published var orders: [Order] = []
     
     func getOrders() {
