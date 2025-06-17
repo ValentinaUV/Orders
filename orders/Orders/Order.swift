@@ -19,6 +19,6 @@ struct Order: Codable, Identifiable {
     let price: Double
     let customer_id: Int
     let image_url: String?
-    let status: OrderStatus
+    var status: OrderStatus
     let customer: Customer?
 }

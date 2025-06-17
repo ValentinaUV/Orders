@@ -10,31 +10,41 @@ import FactoryKit
 import RealmSwift
 import FirebaseAnalytics
 
+enum DataFetchError: Error, LocalizedError {
+    case customerFetchFailed
+    case orderFetchFailed
+    
+    var errorDescription: String? {
+        switch self {
+        case .customerFetchFailed: return "Failed to fetch and save customers."
+        case .orderFetchFailed: return "Failed to fetch and save orders."
+        }
+    }
+}
+
 class AppManager {
     
     @Injected(\.apiService) private var apiService: ApiServiceProtocol
     @Injected(\.repository) private var repository: RepositoryProtocol
     @Injected(\.notificationManager) private var notificationManager: NotificationManager
     
-    func getOrders(completion: @escaping ([Order]) -> Void) {
+    func getOrders() async throws -> [Order] {
         let orders = repository.getAllOrders()
+        
         if orders.isEmpty {
-            fetchAndSaveCustomers { success in
-                if success {
-                    print("Customers saved successfully. Proceeding to fetch orders.")
-                    self.fetchAndSaveOrders {
-                        print("Orders saved successfully. Fetching updated orders from repository.")
-                        let updatedOrders = self.repository.getAllOrders()
-                        completion(updatedOrders)
-                    }
-                } else {
-                    print("Failed to fetch or save customers.")
-                    completion([])
-                }
+            do {
+                try await fetchAndSaveCustomers()
+                try await fetchAndSaveOrders()
+                
+                let updatedOrders = self.repository.getAllOrders()
+                return updatedOrders
+            } catch {
+                print("Failed to load initial data due to: \(error.localizedDescription)")
+                throw error
             }
-            
+        } else {
+            return orders
         }
-        completion(orders)
     }
     
     func getOrder(id: Int) -> Order? {
@@ -56,50 +66,44 @@ class AppManager {
         return repository.getOrdersForCustomer(customerId: customer.id)
     }
     
-    private func fetchAndSaveOrders(completion: @escaping () -> Void) {
-        apiService.fetchOrders { result in
-            switch result {
-            case .success(let orders):
-                print("Fetched orders successfully.")
-                self.repository.saveOrders(orders: orders)
-                completion()
-            case .failure(let error):
-                print("Failed to fetch orders: \(error)")
-            }
+    private func fetchAndSaveOrders() async throws {
+        do {
+            let orders = try await apiService.fetchOrders()
+            print("Fetched orders successfully.")
+            repository.saveOrders(orders: orders)
+        } catch {
+            print("Failed to fetch orders: \(error.localizedDescription)")
+            throw error
         }
     }
 
-    private func fetchAndSaveCustomers(completion: @escaping (Bool) -> Void) {
-        apiService.fetchCustomers { result in
-            switch result {
-            case .success(let customers):
-                print("Fetched customers successfully.")
-                self.repository.saveCustomers(customers: customers)
-                completion(true)
-            case .failure(let error):
-                print("Failed to fetch customers: \(error)")
-                completion(false)
-            }
+    private func fetchAndSaveCustomers() async throws {
+        do {
+            let customers = try await apiService.fetchCustomers()
+            print("Fetched customers successfully.")
+            repository.saveCustomers(customers: customers)
+        } catch {
+            print("Failed to fetch customers: \(error.localizedDescription)")
+            throw error
         }
     }
     
-    func updateOrderStatus(_ order: Order, to newStatus: OrderStatus) {
-        apiService.updateOrderStatus(orderId: order.id, newStatus: newStatus.rawValue) { result in
-            switch result {
-            case .success:
-                print("Simulated update for order \(order.id) status to '\(newStatus)' succeeded.")
+    func updateOrderStatus(_ order: Order, to newStatus: OrderStatus) async throws {
+        do {
+            try await apiService.updateOrderStatus(orderId: order.id, newStatus: newStatus.rawValue)
+            print("Update for order \(order.id) status to '\(newStatus)' succeeded in AppManager.")
 
-                self.repository.updateOrderStatus(orderId: order.id, to: newStatus)
-                self.notificationManager.scheduleOrderStatusChangeNotification(orderId: order.id, newStatus: newStatus)
-                self.logEvent(screenName: "order_screen", screenClass: "OrderView", params: [
-                    "action": "status_update",
-                    "order_id": order.id,
-                    "new_status": newStatus.rawValue
-                ])
-        
-            case .failure(let error):
-                print("Simulated update for order \(order.id) failed: \(error)")
-            }
+            self.repository.updateOrderStatus(orderId: order.id, to: newStatus)
+            self.notificationManager.scheduleOrderStatusChangeNotification(orderId: order.id, newStatus: newStatus)
+            self.logEvent(screenName: "order_screen", screenClass: "OrderView", params: [
+                "action": "status_update",
+                "order_id": order.id,
+                "new_status": newStatus.rawValue
+            ])
+        }
+        catch {
+            print("Update for order \(order.id) failed in AppManager: \(error.localizedDescription)")
+            throw error
         }
     }
     

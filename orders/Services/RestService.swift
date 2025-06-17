@@ -9,58 +9,57 @@ import Foundation
 import Alamofire
 
 protocol ApiServiceProtocol {
-    func fetchOrders(completion: @escaping (Result<[Order], Error>) -> Void)
-    func fetchCustomers(completion: @escaping (Result<[Customer], Error>) -> Void)
-    func updateOrderStatus(orderId: Int, newStatus: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func fetchOrders() async throws -> [Order]
+    func fetchCustomers() async throws -> [Customer]
+    func updateOrderStatus(orderId: Int, newStatus: String) async throws
 }
 
 class RestService: ApiServiceProtocol {
     private let baseURL = AppConfig.apiURL
 
-    func fetchOrders(completion: @escaping (Result<[Order], Error>) -> Void) {
+    func fetchOrders() async throws -> [Order] {
         let urlString = "\(baseURL)/orders"
 
-        AF.request(urlString, method: .get).responseDecodable(of: [Order].self) { response in
-            switch response.result {
-            case .success(let ordersArray):
-                completion(.success(ordersArray))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        let ordersArray = try await AF.request(urlString, method: .get)
+            .validate()
+            .serializingDecodable([Order].self)
+            .value
+        return ordersArray
     }
 
-    func fetchCustomers(completion: @escaping (Result<[Customer], Error>) -> Void) {
+    func fetchCustomers() async throws -> [Customer] {
         let urlString = "\(baseURL)/customers"
 
-        AF.request(urlString, method: .get).responseDecodable(of: [Customer].self) { response in
-            switch response.result {
-            case .success(let customersArray):
-                completion(.success(customersArray))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        let customersArray = try await AF.request(urlString, method: .get)
+            .validate()
+            .serializingDecodable([Customer].self)
+            .value
+        
+        return customersArray
     }
 
-    func updateOrderStatus(orderId: Int, newStatus: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func updateOrderStatus(orderId: Int, newStatus: String) async throws {
         let urlString = "\(baseURL)/orders/\(orderId)"
         let parameters: [String: Any] = ["status": newStatus]
         let headers: HTTPHeaders = [
             "content-type": "application/json"
         ]
-
-        AF.request(urlString, method: .put, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        .validate()
-        .response { response in
-            switch response.result {
+        
+        let response = await AF.request(urlString,
+                                        method: .put,
+                                        parameters: parameters,
+                                        encoding: JSONEncoding.default,
+                                        headers: headers)
+                                .validate()
+                                .serializingString()
+                                .response
+        
+        switch response.result {
             case .success:
-                print("Simulated update response received. Status code: \(response.response?.statusCode)")
-                completion(.success(()))
+                print("Simulated update response received. Status code: \(response.response?.statusCode ?? -1)")
             case .failure(let error):
-                print("Failed to update order status: \(error)")
-                completion(.failure(error))
-            }
+                print("Failed to update order status in RestService: \(error.localizedDescription)")
+                throw error
         }
     }
 }

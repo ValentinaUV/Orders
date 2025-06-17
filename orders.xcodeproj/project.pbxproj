@@ -150,7 +150,6 @@
 				7DE42E542DDAA1EE00CDB7AD /* ordersTests */,
 				7DE42E582DDAA1F100CDB7AD /* ordersUITests */,
 				7DD408E42DD5F71C0041719C /* Products */,
-				80E1CC0AAF3A6EC884819B86 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -255,13 +254,6 @@
 				7DE42E572DDAA1F100CDB7AD /* ordersUITestsLaunchTests.swift */,
 			);
 			path = ordersUITests;
-			sourceTree = "<group>";
-		};
-		80E1CC0AAF3A6EC884819B86 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

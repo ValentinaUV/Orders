@@ -17,8 +17,10 @@ struct OrdersView: View {
             OrdersList(viewModel: viewModel)
                 .padding()
         }
+        .task {
+            await viewModel.getOrders()
+        }
         .onAppear {
-            viewModel.getOrders()
             manager.logEvent(screenName: "orders_screen", screenClass: "OrdersView")
         }
         .toolbarRole(.editor)

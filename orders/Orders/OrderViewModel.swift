@@ -8,6 +8,7 @@
 import SwiftUI
 import FactoryKit
 
+@MainActor
 class OrderViewModel: ObservableObject {
     @Published var order: Order?
     
@@ -17,9 +18,17 @@ class OrderViewModel: ObservableObject {
         order = manager.getOrder(id: id)
     }
     
-    func updateOrderStatus(to status: OrderStatus) {
-        if let order {
-            manager.updateOrderStatus(order, to: status)
+    func updateOrderStatus(to status: OrderStatus) async throws {
+        guard let currentOrder = order else {
+            return
+        }
+
+        do {
+            try await manager.updateOrderStatus(currentOrder, to: status)
+            self.order?.status = status
+        } catch {
+            print("Failed to update order status via ViewModel: \(error.localizedDescription)")
+            throw error
         }
     }
 }

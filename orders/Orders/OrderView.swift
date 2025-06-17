@@ -79,7 +79,13 @@ struct OrderStatusDropdown: View {
         }
         .pickerStyle(.menu)
         .onChange(of: selectedStatus) { newStatus in
-            viewModel.updateOrderStatus(to: newStatus)
+            Task {
+                do {
+                    try await viewModel.updateOrderStatus(to: newStatus)
+                } catch {
+                    print("Failed to update order status from dropdown: \(error.localizedDescription)")
+                }
+            }
         }
         .padding(.trailing, -10)
     }
